@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const { Mongoose } = require("mongoose")
 
 const userController = (User) =>{
   const getUsers = async (req, res) =>{

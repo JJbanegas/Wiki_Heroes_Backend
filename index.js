@@ -6,6 +6,8 @@ const cors = require('cors')
 
 const User = require('./Models/userModel')
 const userRouter = require('./Routes/userRouter')(User)
+const Hero = require('./Models/heroModel')
+const heroRouter = require('./Routes/heroRouter')(Hero)
 
 const app = express()
 
@@ -24,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true}))
 app.use(bodyParser.json())
 //app.all('/api/*', jwt({secret: 'secret', algorithms: ['HS256']}).unless({path: ['/api/ussers/login']}))
 app.use('/api',userRouter)
+app.use('/api', heroRouter)
 
 const port = 8080
 app.listen(port, () => {
