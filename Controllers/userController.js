@@ -1,0 +1,131 @@
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+
+const userController = (User) =>{
+  const getUsers = async (req, res) =>{
+    try{
+      const { query } = req
+      console.log('query', query)
+      const response = await User.find(query)
+      return res.json(response) 
+    } catch(error){
+      throw error
+    }
+  }
+
+  const postUser = async (req, res) => {
+    const saltingNumber = 10
+    const pss = await bcrypt.hash(req.body.password, saltingNumber)
+    try{
+      const { body } = req
+      const user = new User({
+        ...body,
+        /*firstName: body.firstName,
+        lastName: body.lastName,*/
+        usserName:(() => {
+          if(body.lastName && body.firstName){
+            return (body.firstName + "." + body.lastName)
+          }
+          else{
+            return body.firstName ? body.firstName : body.lastName
+          }
+          })(),
+        password: pss,
+        phone: body.phone.toString()
+        /*email: body.email,
+        address: body.address,
+        phone: body.phone*/
+      })
+      await user.save()
+
+      return res.status(201).json(user)
+    } catch(error){
+      throw error
+    }
+  }
+
+  const getUserById = async (req, res) =>{
+    try{
+      const{ params } = req
+      const response = await User.findById(params.userId)
+
+      return res.json(response)
+    } catch(error){
+      throw error
+    }
+  }
+
+  const putUserById = async (req, res) =>{
+    try{    
+      const { params, body } = req
+      const response = await User.findByIdAndUpdate(
+        {_id: params.userId}, {
+          $set: {
+            firstName: body.firstName,
+            lastName: body.lastName,
+            usserName: (() => {
+              if(body.lastName && body.firstName){
+                return (body.firstName + "." + body.lastName)
+              }
+              else{
+                return body.firstName ? body.firstName : body.lastName
+              }
+              })(),
+            password: body.password,
+            email: body.email,
+            address: body.address,
+            phone: body.phone}
+          }, {new: true})
+      return res.status(202).json(response)
+    } catch(error){
+      throw error
+    }
+  }
+
+  const deleteUserById = async(req, res) =>{
+    try{
+      const { params } = req
+      await User.findByIdAndDelete(params.userId)
+      return res.status(202).json({message: "El usuario fue eliminado con exito"})
+    } catch(error){
+      throw error
+    }
+  }
+
+  const postUserLogIn = async(req, res) =>{
+    try{
+        const { body } = req
+        const response = await User.findOne({userName: body.userName})
+        const isPasswordCorrect = await bcrypt.compare(body.password, response.password)
+        if(response != null && isPasswordCorrect){
+          const tokenUsser = {
+            firstName: response.firstName,
+            lastName: response.lastName,
+            usserName: response.userName
+          }
+          const token = jwt.sign(tokenUser, 'secret')
+          return res.status(202).json({message: 'Bienvenido usuario: ' + response.userName, token: token})
+        }
+        else{
+          return res.status(202).json({message: 'Datos invalidos'})
+        } 
+    } catch(error){
+      throw error
+    }
+  }
+
+  const GetUserByUserName = async(req, res) =>{
+    try{
+      const{ params } = req
+      const response = await User.find({userName: params.userName})
+
+      return res.json(response)
+    } catch(error){
+      throw error
+    }
+  }
+
+  return {getUsers, postUser, getUserById, putUserById, deleteUserById, postUserLogIn, GetUserByUserName}
+}
+
+module.exports = userController
