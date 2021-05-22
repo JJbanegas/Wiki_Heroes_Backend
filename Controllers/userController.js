@@ -23,7 +23,12 @@ const userController = (User) =>{
         ...body,
         /*firstName: body.firstName,
         lastName: body.lastName,*/
-        usserName:(() => {
+        password: pss,
+        /*phone: body.phone.toString(),
+        email: body.email,
+        address: body.address,
+        phone: body.phone,*/
+        userName:(() => {
           if(body.lastName && body.firstName){
             return (body.firstName + "." + body.lastName)
           }
@@ -31,11 +36,6 @@ const userController = (User) =>{
             return body.firstName ? body.firstName : body.lastName
           }
           })(),
-        password: pss,
-        phone: body.phone.toString()
-        /*email: body.email,
-        address: body.address,
-        phone: body.phone*/
       })
       await user.save()
 
@@ -64,7 +64,7 @@ const userController = (User) =>{
           $set: {
             firstName: body.firstName,
             lastName: body.lastName,
-            usserName: (() => {
+            userName: (() => {
               if(body.lastName && body.firstName){
                 return (body.firstName + "." + body.lastName)
               }
@@ -76,7 +76,7 @@ const userController = (User) =>{
             email: body.email,
             address: body.address,
             phone: body.phone}
-          }, {new: true})
+          }, {new: true}) //que hace esta linea?  
       return res.status(202).json(response)
     } catch(error){
       throw error
@@ -96,13 +96,15 @@ const userController = (User) =>{
   const postUserLogIn = async(req, res) =>{
     try{
         const { body } = req
-        const response = await User.findOne({userName: body.userName})
+        const response = await User.findOne({userName: body.userName}, function(err,obj) {console.log(obj)})
+        
+        console.log("body.password: ", body.password , "response.password: ")
         const isPasswordCorrect = await bcrypt.compare(body.password, response.password)
         if(response != null && isPasswordCorrect){
-          const tokenUsser = {
+          const tokenUser = {
             firstName: response.firstName,
             lastName: response.lastName,
-            usserName: response.userName
+            userName: response.userName
           }
           const token = jwt.sign(tokenUser, 'secret')
           return res.status(202).json({message: 'Bienvenido usuario: ' + response.userName, token: token})
