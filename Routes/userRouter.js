@@ -15,7 +15,6 @@ const routes = (User) => {
 
   userRouter.route('/users/:userId')
     .get(controller.getUserById)
-
     .put(validator.body(validations.valUserPut),
       controller.putUserById)
 

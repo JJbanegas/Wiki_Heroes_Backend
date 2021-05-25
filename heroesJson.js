@@ -6,7 +6,7 @@ db.books.insert([
       heroName: 'Captain America',
       realName: 'Steven',
       lastName: 'Rogers',
-      birthDate: '', // No se como maneja Mongo los datos tipo Date
+      birthDate: Date.now(),
       universe: 'Marvel Cinematic Universe', 
       firstAppearance: 'Captain America Comics #1',
       age: '102 years old',
