@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const { Mongoose } = require("mongoose")
+var fs = require('fs');
+var path = require('path');
 
 const userController = (User) =>{
   const getUsers = async (req, res) =>{
     try{
       const { query } = req
-      console.log('query', query)
       const response = await User.find(query)
       return res.json(response) 
     } catch(error){
@@ -15,27 +15,17 @@ const userController = (User) =>{
   }
 
   const postUser = async (req, res) => {
+    const { body } = req
     const saltingNumber = 10
-    const pss = await bcrypt.hash(req.body.password, saltingNumber)
+    const pss = await bcrypt.hash(body.password, saltingNumber)
     try{
-      const { body } = req
       const user = new User({
         ...body,
-        /*firstName: body.firstName,
-        lastName: body.lastName,*/
-        usserName:(() => {
-          if(body.lastName && body.firstName){
-            return (body.firstName + "." + body.lastName)
-          }
-          else{
-            return body.firstName ? body.firstName : body.lastName
-          }
-          })(),
         password: pss,
-        phone: body.phone.toString()
-        /*email: body.email,
-        address: body.address,
-        phone: body.phone*/
+        photo: {
+          data: fs.readFileSync(path.join(__dirname, + './Storage/Images' + req.file.filename)),
+          contentType: 'image/png'
+        }
       })
       await user.save()
 

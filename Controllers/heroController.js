@@ -1,7 +1,5 @@
 const { Mongoose } = require("mongoose")
 
-
-
 const heroesController = (Hero) => {
     const getHeroes = async (req, res) => {
       try {const { query } = req
@@ -14,7 +12,8 @@ const heroesController = (Hero) => {
     }
   
     const postHero = async(req,res) => {
-      try {const hero = new Hero(req.body)
+      try {
+        const hero = new Hero(req.body)
         console.log ("body: ", req.body)
         await hero.save()
     
