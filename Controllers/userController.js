@@ -21,11 +21,29 @@ const userController = (User) =>{
     try{
       const user = new User({
         ...body,
+<<<<<<< HEAD
         password: pss,
         photo: {
           data: fs.readFileSync(path.join(__dirname, + './Storage/Images' + req.file.filename)),
           contentType: 'image/png'
         }
+=======
+        /*firstName: body.firstName,
+        lastName: body.lastName,*/
+        password: pss,
+        /*phone: body.phone.toString(),
+        email: body.email,
+        address: body.address,
+        phone: body.phone,*/
+        userName:(() => {
+          if(body.lastName && body.firstName){
+            return (body.firstName + "." + body.lastName)
+          }
+          else{
+            return body.firstName ? body.firstName : body.lastName
+          }
+          })(),
+>>>>>>> a82bcae9953a600bd167e16b842045c65d2267cb
       })
       await user.save()
 
@@ -54,7 +72,7 @@ const userController = (User) =>{
           $set: {
             firstName: body.firstName,
             lastName: body.lastName,
-            usserName: (() => {
+            userName: (() => {
               if(body.lastName && body.firstName){
                 return (body.firstName + "." + body.lastName)
               }
@@ -66,7 +84,7 @@ const userController = (User) =>{
             email: body.email,
             address: body.address,
             phone: body.phone}
-          }, {new: true})
+          }, {new: true}) //que hace esta linea?  
       return res.status(202).json(response)
     } catch(error){
       throw error
@@ -86,13 +104,15 @@ const userController = (User) =>{
   const postUserLogIn = async(req, res) =>{
     try{
         const { body } = req
-        const response = await User.findOne({userName: body.userName})
+        const response = await User.findOne({userName: body.userName}, function(err,obj) {console.log(obj)})
+        
+        console.log("body.password: ", body.password , "response.password: ")
         const isPasswordCorrect = await bcrypt.compare(body.password, response.password)
         if(response != null && isPasswordCorrect){
-          const tokenUsser = {
+          const tokenUser = {
             firstName: response.firstName,
             lastName: response.lastName,
-            usserName: response.userName
+            userName: response.userName
           }
           const token = jwt.sign(tokenUser, 'secret')
           return res.status(202).json({message: 'Bienvenido usuario: ' + response.userName, token: token})

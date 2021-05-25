@@ -24,8 +24,8 @@ conectDb()
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true}))
 app.use(bodyParser.json())
-//app.all('/api/*', jwt({secret: 'secret', algorithms: ['HS256']}).unless({path: ['/api/ussers/login']}))
-app.use('/api',userRouter)
+app.all('/api/*', jwt({secret: 'secret', algorithms: ['HS256']}).unless({path: ['/api/users/login']}))
+app.use('/api', userRouter)
 app.use('/api', heroRouter)
 
 const port = 8080

@@ -13,7 +13,7 @@ const valPostUser = joi.object({
 /*const valQueryString = joi.required().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))*/
 
 const valUserLogin = joi.object({
-  usserName: joi.string().required().min(3).max(30),
+  userName: joi.string().required().min(3).max(30),
   password: joi.string().required().min(3).max(30).pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
 })
 
