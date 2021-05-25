@@ -1,5 +1,7 @@
 const joi = require('joi')
 
+// Hay que corroborar que se validen todos los datos de los nuevos modelos
+
 const valPostUser = joi.object({
   firstName: joi.string().required().min(3).max(30),
   lastName: joi.string().required().min(3).max(30),
@@ -40,4 +42,19 @@ const valPutBook = joi.object({
   read: joi.boolean()
 })
 
-module.exports = {valPostUser, /*valQueryString,*/ valUserLogin, valUsserPut, valPostBook, valPutBook}
+/*
+const valPosthero = joi.object({
+  heroName: joi.string().required(),
+    firstName: joi.string().required(),
+    lastName: joi.string().required(),
+    birthDate: joi.date().required(), //Interpreta la forma americana de poner la fecha?, que es el agregado que le pone a la fecha en el Bson?.
+    universe: joi.string().required(),
+    firstAppearance: joi.string().required(),
+    age: joi.string().required(),
+    powers: joi.string().required(),
+    achievments: joi.string().required()
+})*/
+
+
+
+module.exports = {valPostUser, /*valQueryString,*/ valUserLogin, valUsserPut, valPostBook, valPutBook, /*valPostHero*/}
