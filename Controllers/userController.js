@@ -99,7 +99,7 @@ const userController = (User) =>{
         const { body } = req
         const response = await User.findOne({userName: body.userName}, function(err,obj) {console.log(obj)})
         
-        console.log("body.password: ", body.password , "response.password: ")
+        //console.log("body.password: ", body.password , "response.password: ")
         const isPasswordCorrect = await bcrypt.compare(body.password, response.password)
         if(response != null && isPasswordCorrect){
           const tokenUser = {
