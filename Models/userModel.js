@@ -1,26 +1,40 @@
 const mongoose = require("mongoose")
-
 const { Schema } = mongoose
 
 const userModel = new Schema(
   {
-    userName: {type: String},
+    userName: {
+      type: String,
+      unique: true
+    },
     firstName: {type: String },
     lastName: {type: String },
     userName: {type: String },
-    password: {type: String },
-    email: {type: String},
+    password: {
+      type: String,
+      unique: true
+    },
+    email: {
+      type: String,
+      unique: true
+    },
     phone: {type: String},
     address: {type: String},
     dateBirth: {type: Date},
     photo: {
       data: Buffer,
       contentType: String
-    }
+    },
+    roles: [{
+      ref: "role",
+      type: Schema.Types.ObjectId
+    }]
   },
   {
-    collection: 'Users'
+    collection: 'users',
+    timestamps: true,
+    versionKey: false
   }
 )
 
-module.exports = mongoose.model("User", userModel)
+module.exports = mongoose.model("user", userModel)

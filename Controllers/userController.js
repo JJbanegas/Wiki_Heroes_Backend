@@ -2,8 +2,19 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 var fs = require('fs');
 var path = require('path');
+const Role = require('../Models/roleModel')
 
 const userController = (User) =>{
+
+  const encryptPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10)
+    return await bcrypt.hash(password, salt)
+  }
+  
+  const comparePassword = async (password, receivedPassword) => {
+    return await bcrypt.compare(password, receivedPassword)
+  } 
+
   const getUsers = async (req, res) =>{
     try{
       const { query } = req
@@ -21,29 +32,11 @@ const userController = (User) =>{
     try{
       const user = new User({
         ...body,
-<<<<<<< HEAD
         password: pss,
         photo: {
           data: fs.readFileSync(path.join(__dirname, + './Storage/Images' + req.file.filename)),
           contentType: 'image/png'
         }
-=======
-        /*firstName: body.firstName,
-        lastName: body.lastName,*/
-        password: pss,
-        /*phone: body.phone.toString(),
-        email: body.email,
-        address: body.address,
-        phone: body.phone,*/
-        userName:(() => {
-          if(body.lastName && body.firstName){
-            return (body.firstName + "." + body.lastName)
-          }
-          else{
-            return body.firstName ? body.firstName : body.lastName
-          }
-          })(),
->>>>>>> a82bcae9953a600bd167e16b842045c65d2267cb
       })
       await user.save()
 
@@ -125,6 +118,51 @@ const userController = (User) =>{
     }
   }
 
+  const postUserSingnUp = async (req, res) => {
+
+    console.log("saved user")
+    const { body } = req
+    const pss = await encryptPassword(body.password)
+    
+    const newUser = new User({
+      ...body,
+      password: pss
+    })
+
+    if(body.roles){
+      const foundRoles = await Role.find({name: {$in: body.roles}})
+      newUser.roles = foundRoles.map(role => role._id)
+    } else{
+      const role = await Role.findOne({name: "user"})
+      newUser.roles = [role._id]
+    }
+
+    const savedUser = await newUser.save()
+    console.log("saved user", savedUser)
+
+    const token = jwt.sign({id: savedUser.id}, 'secret', {expiresIn: 86400})
+    res.status(200).json({token})
+  }
+
+  const postUserSingnIn = async (req, res) => {
+
+    const { body } = req
+    console.log("request" , body)
+    const userFound = await User.findOne({userName: body.userName}).populate("roles")
+
+    if(!userFound) return res.status(400).json({message: "user not found"})
+    console.log ("userfound", userFound)
+
+    const matchPassword = await comparePassword(body.password, userFound.password)
+
+    if(!matchPassword) return res.status(400).json({token: null, message: "invalid password"})
+
+    const token = jwt.sign({id: userFound._id}, 'secret', {expiresIn: 86400})
+
+    res.json({token: token})
+  }
+
+
   const GetUserByUserName = async(req, res) =>{
     try{
       const{ params } = req
@@ -136,7 +174,7 @@ const userController = (User) =>{
     }
   }
 
-  return {getUsers, postUser, getUserById, putUserById, deleteUserById, postUserLogIn, GetUserByUserName}
+  return {getUsers, postUser, getUserById, putUserById, deleteUserById, postUserLogIn, GetUserByUserName, postUserSingnUp, postUserSingnIn}
 }
 
 module.exports = userController

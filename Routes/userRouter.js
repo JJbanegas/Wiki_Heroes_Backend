@@ -2,9 +2,11 @@ const express = require('express')
 const userController = require('../Controllers/userController')
 const validator = require('express-joi-validation').createValidator()
 const validations = require('../Validations/validation')
+const { verifySingnUp } = require('../middlewares/content')
 
 
 const routes = (User) => {
+  const {checkRoles, checkDuplicatedUserOrEmail} = verifySingnUp
   const userRouter = express.Router()
   const controller = userController(User)
 
@@ -20,9 +22,11 @@ const routes = (User) => {
 
     .delete(controller.deleteUserById)
 
-  userRouter.route('/users/login')
-    .post(validator.body(validations.valUserLogin),
-      controller.postUserLogIn)
+  userRouter.route('/users/singnup')
+    .post([checkDuplicatedUserOrEmail, checkRoles], controller.postUserSingnUp)
+
+  userRouter.route('/users/singnin')
+    .post(controller.postUserSingnIn)
 
   userRouter.route('/users/userName/:userName')
     .get(controller.GetUserByUserName)
