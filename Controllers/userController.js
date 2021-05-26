@@ -21,13 +21,6 @@ const userController = (User) =>{
     try{
       const user = new User({
         ...body,
-<<<<<<< HEAD
-        password: pss,
-        photo: {
-          data: fs.readFileSync(path.join(__dirname, + './Storage/Images' + req.file.filename)),
-          contentType: 'image/png'
-        }
-=======
         /*firstName: body.firstName,
         lastName: body.lastName,*/
         password: pss,
@@ -43,7 +36,6 @@ const userController = (User) =>{
             return body.firstName ? body.firstName : body.lastName
           }
           })(),
->>>>>>> a82bcae9953a600bd167e16b842045c65d2267cb
       })
       await user.save()
 
