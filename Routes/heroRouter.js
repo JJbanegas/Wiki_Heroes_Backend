@@ -17,7 +17,7 @@ const routes = (Hero) => {
 
   heroRouter.route('/heroes/:heroId')//querystrinng validacion necesaria
     .get( controller.getHeroById)
-    .put(verifyToken, controller.updateHero)//body y queryString validacion necesaria
+    .put(/*verifyToken, */controller.updateHero)//body y queryString validacion necesaria
     .delete(verifyToken, controller.deleteHero)
 
   return heroRouter

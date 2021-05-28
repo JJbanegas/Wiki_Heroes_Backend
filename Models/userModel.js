@@ -9,7 +9,6 @@ const userModel = new Schema(
     },
     firstName: {type: String },
     lastName: {type: String },
-    userName: {type: String },
     password: {
       type: String,
       unique: true
@@ -25,10 +24,10 @@ const userModel = new Schema(
       data: Buffer,
       contentType: String
     },
-    roles: [{
+    roles: {
       ref: "role",
       type: Schema.Types.ObjectId
-    }]
+    }
   },
   {
     collection: 'users',

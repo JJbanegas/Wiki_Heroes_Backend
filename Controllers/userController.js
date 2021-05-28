@@ -13,12 +13,13 @@ const userController = (User) =>{
   
   const comparePassword = async (password, receivedPassword) => {
     return await bcrypt.compare(password, receivedPassword)
-  } 
+  }
 
   const getUsers = async (req, res) =>{
     try{
       const { query } = req
-      const response = await User.find(query)
+      const response = await User.find(query).populate('roles')
+      console.log(response)
       return res.json(response) 
     } catch(error){
       throw error
@@ -140,14 +141,13 @@ const userController = (User) =>{
     const savedUser = await newUser.save()
     console.log("saved user", savedUser)
 
-    const token = jwt.sign({id: savedUser.id}, 'secret', {expiresIn: 86400})
+    const token = jwt.sign({id: savedUser.id, role: savedUser.roles}, 'secret', {expiresIn: 86400})
     res.status(200).json({token})
   }
 
   const postUserSingnIn = async (req, res) => {
 
     const { body } = req
-    console.log("request" , body)
     const userFound = await User.findOne({userName: body.userName}).populate("roles")
 
     if(!userFound) return res.status(400).json({message: "user not found"})
@@ -156,8 +156,9 @@ const userController = (User) =>{
     const matchPassword = await comparePassword(body.password, userFound.password)
 
     if(!matchPassword) return res.status(400).json({token: null, message: "invalid password"})
+    console.log(userFound)
 
-    const token = jwt.sign({id: userFound._id}, 'secret', {expiresIn: 86400})
+    const token = jwt.sign({id: userFound._id, role: userFound.roles}, 'secret', {expiresIn: 86400})
 
     res.json({token: token})
   }
