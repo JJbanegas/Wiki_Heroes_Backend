@@ -12,7 +12,7 @@ const routes = (Hero) => {
   const controller = heroesController(Hero)
 
   heroRouter.route('/heroes')
-    .get(controller.getHeroes)
+    .get(verifyToken, controller.getHeroes)
     .post([verifyToken, (isModerator || isAdmin)], controller.postHero)
 
   heroRouter.route('/heroes/:heroId')//querystrinng validacion necesaria

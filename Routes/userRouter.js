@@ -2,16 +2,17 @@ const express = require('express')
 const userController = require('../Controllers/userController')
 const validator = require('express-joi-validation').createValidator()
 const validations = require('../Validations/validation')
-const { verifySingnUp } = require('../middlewares/content')
+const { verifySingnUp, verifyJwt } = require('../middlewares/content')
 
 
 const routes = (User) => {
   const {checkRoles, checkDuplicatedUserOrEmail} = verifySingnUp
+  const { verifyToken } = verifyJwt
   const userRouter = express.Router()
   const controller = userController(User)
 
   userRouter.route('/users')
-    .get(controller.getUsers)
+    .get(verifyToken, controller.getUsers)
     .post(validator.body(validations.valPostUser),
       controller.postUser)
 
