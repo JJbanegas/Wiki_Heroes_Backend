@@ -7,13 +7,13 @@ const heroesController = require('../controllers/heroController')
 
 const routes = (Hero) => {
 
-  const { verifyToken, isModerator, isAdmin } = verifyJwt
+  const { verifyToken, isModerator, isAdmin, isModeratorOrAdmin } = verifyJwt
   const heroRouter = express.Router()
   const controller = heroesController(Hero)
 
   heroRouter.route('/heroes')
     .get(verifyToken, controller.getHeroes)
-    .post([verifyToken, (isModerator || isAdmin)], controller.postHero)
+    .post([verifyToken, isModeratorOrAdmin], controller.postHero)
 
   heroRouter.route('/heroes/:heroId')//querystrinng validacion necesaria
     .get( controller.getHeroById)

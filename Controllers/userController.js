@@ -141,7 +141,7 @@ const userController = (User) =>{
     const savedUser = await newUser.save()
     console.log("saved user", savedUser)
 
-    const token = jwt.sign({id: savedUser.id, role: savedUser.roles}, 'secret', {expiresIn: '120s'})
+    const token = jwt.sign({id: savedUser.id, role: savedUser.roles}, 'secret', {expiresIn: '1h'})
     res.status(200).json({token})
   }
 
@@ -158,7 +158,7 @@ const userController = (User) =>{
     if(!matchPassword) return res.status(400).json({token: null, message: "invalid password"})
     console.log(userFound)
 
-    const token = jwt.sign({id: userFound._id, role: userFound.roles}, 'secret', {expiresIn: '120s'})
+    const token = jwt.sign({id: userFound._id, role: userFound.roles}, 'secret', {expiresIn: '1h'})
 
     res.json({token: token})
   }

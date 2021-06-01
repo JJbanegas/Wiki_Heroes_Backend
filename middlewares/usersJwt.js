@@ -5,7 +5,7 @@ const Role = require("../Models/roleModel")
 const verifyToken = async (req, res, next) =>{
   try{
     const token = req.headers.authorization
-    console.log(token)
+    console.log("token", token)
 
     if(!token) return res.status(403).json({message: "no token provided"})
 
@@ -25,13 +25,12 @@ const verifyToken = async (req, res, next) =>{
 const isModerator = async (req, res, next) =>{
   const user = await User.findById(req.userId)
   const roles = await Role.find({_id: {$in: user.roles}})
+  console.log("IS MODERATOR ----------------------", roles[0])
 
-  for(let i = 0; i < roles.length; i++){
-    if(roles[i].name === "moderator"){
+    if(roles[0].name === "moderator"){
       next()
       return
-    }
-  }
+    } 
 
   return res.status(403).json({messagge: "require moderator rol"})
 }
@@ -39,15 +38,29 @@ const isModerator = async (req, res, next) =>{
 const isAdmin = async (req, res, next) =>{
   const user = await User.findById(req.userId)
   const roles = await Role.find({_id: {$in: user.roles}})
+  console.log("IS ADMIN ----------------------", roles[0])
 
-  for(let i = 0; i < roles.length; i++){
-    if(roles[i].name === "admin"){
+    if(roles[0].name === "admin"){
       next()
       return
     }
-  }
+  
 
   return res.status(403).json({messagge: "require admin rol"})
 }
 
-module.exports = {verifyToken, isModerator, isAdmin}
+const isModeratorOrAdmin = async (req, res, next) =>{
+  const user = await User.findById(req.userId)
+  const roles = await Role.find({_id: {$in: user.roles}})
+  console.log("IS ADMIN ----------------------", roles[0])
+
+    if(roles[0].name === "admin" || roles[0].name === "moderator"){
+      next()
+      return
+    }
+  
+
+  return res.status(403).json({messagge: "require rol"})
+}
+
+module.exports = {verifyToken, isModerator, isAdmin, isModeratorOrAdmin}
