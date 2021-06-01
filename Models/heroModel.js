@@ -14,7 +14,7 @@ const heroModel = Schema(
     age: {type: String},
     powers: {type: String},
     achievments: {type:String},
-    imageUrl: {type:String}
+    Image: {type:String}
   },
   {
     collection: 'heroes'

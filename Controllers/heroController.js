@@ -49,7 +49,8 @@ const heroesController = (Hero) => {
             age: body.age,
             powers: body.powers,
             achievments: body.achievments,
-            side: body.side
+            side: body.side,
+            Image: body.Image
           }
         }) 
       return res.status(202).json(response)
